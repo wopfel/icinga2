@@ -368,7 +368,9 @@ void ApiListener::ApiTimerHandler(void)
 		}
 	}
 
+	/* [master problem]
 	if (IsMaster()) {
+	*/
 		Zone::Ptr my_zone = Zone::GetLocalZone();
 
 		BOOST_FOREACH(const Zone::Ptr& zone, DynamicType::GetObjectsByType<Zone>()) {
@@ -379,6 +381,7 @@ void ApiListener::ApiTimerHandler(void)
 				continue;
 			}
 
+			/* [slave problem]
 			bool connected = false;
 
 			BOOST_FOREACH(const Endpoint::Ptr& endpoint, zone->GetEndpoints()) {
@@ -388,12 +391,13 @@ void ApiListener::ApiTimerHandler(void)
 				}
 			}
 
-			/* don't connect to an endpoint if we already have a connection to the zone */
+			/ * don't connect to an endpoint if we already have a connection to the zone * /
 			if (connected) {
 				Log(LogDebug, "ApiListener")
 				    << "Not connecting to Zone '" << zone->GetName() << "' because we're already connected to it.";
 				continue;
 			}
+			[slave problem] */
 
 			BOOST_FOREACH(const Endpoint::Ptr& endpoint, zone->GetEndpoints()) {
 				/* don't connect to ourselves */
@@ -421,7 +425,9 @@ void ApiListener::ApiTimerHandler(void)
 				thread.detach();
 			}
 		}
+	/* [master problem]
 	}
+	*/
 
 	BOOST_FOREACH(const Endpoint::Ptr& endpoint, DynamicType::GetObjectsByType<Endpoint>()) {
 		if (!endpoint->IsConnected())
